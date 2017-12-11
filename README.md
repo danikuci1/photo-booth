@@ -14,44 +14,32 @@ Because of the use of gphoto2 it works with nearly any camera like plug and play
 
 To clone and run this repository you'll need [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) and [gphoto2](http://gphoto.sourceforge.net/) installed on your computer. 
 
-I ran this app on Ubuntu Linux (64bit), MacOS 10.12 and Raspbian JESSIE (Raspberry Pi 3, ARM) and it works fine. **If you want to run photo-booth on Raspbian STRETCH (latest Raspbian version) please note the hints above!** It will probably not work on Windows, but not sure what Node.js magic is capable of. Anyway, the documentation here will be focused on Linux based systems. 
+The original author ran this on Ubuntu and MacOS. I ran his version on RasPi but had some issues; this fork is my attempt to correct those issues. 
 
-**NOTE:** Please use Raspbian Jessie, Raspbian STRETCH causes some problems, probably because of the Pixel desktop.
 
-From your command line:
-
-```bash
-# Install needed dependencies
-sudo apt-get install git npm gphoto2 libxss-dev libgconf-2-4 libnss3
-
-# If you want to use a Raspberry Pi > 1: Activate hardware acceleration
-sudo apt-get install libgl1-mesa-dri
-sudo nano /boot/config.txt 	# Add `dtoverlay=vc4-kms-v3d`
-
-# Clone this repository
-git clone https://github.com/philipptrenz/photo-booth
-# Go into the repository
-cd photo-booth
-# Install dependencies and run the app
-npm install && ./node_modules/.bin/electron-rebuild
-sudo npm start
-```
 
 
 
 **For Raspbian STRETCH:**
 
 ```bash
-# Install needed dependencies
-sudo apt-get install git gphoto2 libxss-dev libgconf-2-4 libnss3
-git clone https://github.com/audstanley/NodeJs-Raspberry-Pi-Arm7 && cd NodeJs-Raspberry-Pi-Arm7 && chmod +x Install-Node.sh && sudo ./Install-Node.sh;
+# We'll run the whole routine as root to get everything going
+sudo -su
 
-# If you want to use a Raspberry Pi > 1: Activate hardware acceleration
+# We'll use [Gonzalo's installer script](https://github.com/gonzalo/gphoto2-updater) for installing gphoto2
+ wget https://raw.githubusercontent.com/gonzalo/gphoto2-updater/master/gphoto2-updater.sh && chmod +x gphoto2-updater.sh && sudo ./gphoto2-updater.sh
+apt-get install git
+
+# Install other dependencies
+apt-get install git libxss-dev libgconf-2-4 libnss3 -y
+wget -O - https://raw.githubusercontent.com/audstanley/NodeJs-Raspberry-Pi/master/Install-Node.sh | bash;
+
+# Activate hardware acceleration for Raspberry Pi
 sudo apt-get install libgl1-mesa-dri
 sudo nano /boot/config.txt 	# Add `dtoverlay=vc4-kms-v3d`
 
 # Clone this repository
-git clone https://github.com/philipptrenz/photo-booth
+git clone https://github.com/danikuci1/photo-booth
 # Go into the repository
 cd photo-booth
 # Install dependencies and run the app
@@ -63,43 +51,10 @@ sudo bash start.sh
 
 **HINT:** The little linux tool `unclutter` can hide the cursor.
 
-If you run into any problems feel free to report an issue, I'll try to help!
-
- 
 ## Configure it
 
 The project includes a config.json file. There you can set several parameters, e.g. to start in fullscreen or not or if you want to keep your taken photos on your camera.
 
-It looks like this:
-
-```json
-{
-	"init": {
-		"fullscreen": false,
-		"width": "1440",
-		"height": "900",
-		"showDevTools": true,
-		"useGPIO": true
-	},
-	"maxImageSize": "1500",
-	"gphoto2": {
-		"keepImagesOnCamera": true,
-		"captureTarget": 1,
-		"port": null,
-		"optionalParameter": null
-	},
-	"errorMessage": "<i class='fa fa-exclamation-circle' aria-hidden='true' style='font-size: 1em; padding-right: 10px;'></i> Oh shit ...",
-	"content_dir": "",
-	"webapp": {
-		"password": "test"
-	},
-	"branding": {
-		"type": "text",
-		"content": "<div style='font-size: 1.2em; padding-left: 25px;'><i class='fa fa-wifi' aria-hidden='true' style='font-size: 2.5em;'></i> <b style='font-size: 2em; padding-left: 15px;'>photo-booth</b><br /><p>Log into wifi, browse to <b style='padding: 0 5px;'>photo.app</b> and download your photos!</p></div>",
-		"position": "bottomleft"
-	}
-}
-```
 Some notes to this:
 
 * Booleans are always `true` or `false`
